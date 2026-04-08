@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { Bot, User, Lock, Mail, Activity, LogIn, UserPlus } from 'lucide-react';
 import './index.css';
 
-const API_URL = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/auth` : 'http://localhost:5000/api/auth';
+const API_URL = import.meta.env.VITE_API_URL 
+  ? `${import.meta.env.VITE_API_URL}/auth` 
+  : "https://smartbot-server-3bmu.onrender.com/api/auth";
 
 const Auth = ({ setToken }) => {
     const [mode, setMode] = useState('login'); // 'login', 'register', 'forgot', 'reset'

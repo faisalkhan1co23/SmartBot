@@ -5,7 +5,7 @@ import MessageBubble from './MessageBubble';
 import Auth from './Auth';
 import './index.css';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'https://smartbot-server-3bmu.onrender.com';
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem('token'));
