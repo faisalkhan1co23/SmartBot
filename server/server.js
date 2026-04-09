@@ -33,7 +33,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-const app = express();
+
 const PORT = process.env.PORT || 5000;
 
 // Create uploads directory if it doesn't exist
