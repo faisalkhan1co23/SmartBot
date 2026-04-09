@@ -1,13 +1,13 @@
 const express = require('express');
 const cors = require('cors');
-const app = express( );
-app.use(express.json( ));
+const app = express();
 
 app.use(cors({
   origin: "*",
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   credentials: true
 }));
+app.use(express.json({ limit: '50mb' }));
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const fs = require('fs');
@@ -42,10 +42,12 @@ if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir);
 }
 
-// Middleware
-app.use(cors());
-app.use(express.json({ limit: '50mb' }));
+// Static file serving
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Health check routes
+app.get('/', (req, res) => res.json({ status: 'Server is running normally' }));
+app.get('/api', (req, res) => res.json({ status: 'API is running optimally' }));
 
 // Database Setup
 // Database Setup
@@ -238,7 +240,9 @@ const authenticateToken = (req, res, next) => {
 };
 
 // Auth Routes
-app.post('/api/auth/register', async (req, res) => {
+const authRoutes = express.Router();
+
+authRoutes.post('/register', async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) return res.status(400).json({ error: 'Email and password required' });
 
@@ -259,7 +263,7 @@ app.post('/api/auth/register', async (req, res) => {
     }
 });
 
-app.post('/api/auth/login', (req, res) => {
+authRoutes.post('/login', (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) return res.status(400).json({ error: 'Email and password required' });
 
@@ -275,7 +279,7 @@ app.post('/api/auth/login', (req, res) => {
     });
 });
 
-app.post('/api/auth/forgot-password', (req, res) => {
+authRoutes.post('/forgot-password', (req, res) => {
     const { email } = req.body;
     if (!email) return res.status(400).json({ error: 'Email required' });
 
@@ -295,7 +299,7 @@ app.post('/api/auth/forgot-password', (req, res) => {
     });
 });
 
-app.post('/api/auth/reset-password', async (req, res) => {
+authRoutes.post('/reset-password', async (req, res) => {
     const { token, newPassword } = req.body;
     if (!token || !newPassword) return res.status(400).json({ error: 'Token and new password required' });
 
@@ -319,6 +323,9 @@ app.post('/api/auth/reset-password', async (req, res) => {
         }
     });
 });
+
+// Register auth router
+app.use('/api/auth', authRoutes);
 
 // API Routes
 
@@ -465,6 +472,17 @@ app.post('/api/chat', authenticateToken, upload.single('file'), async (req, res)
                 });
             });
     });
+});
+
+// Global Catch-All for 404s (ensures JSON response instead of HTML)
+app.use((req, res, next) => {
+    res.status(404).json({ error: `Endpoint not found: ${req.method} ${req.url}` });
+});
+
+// Global Error Handler (ensures JSON response on crashes)
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ error: 'Internal Server Error' });
 });
 
 app.listen(PORT, () => {
