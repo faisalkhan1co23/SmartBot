@@ -187,7 +187,7 @@ const generateImageResponse = async (prompt) => {
         
         const modelUrl = "https://ai.api.nvidia.com/v1/genai/stabilityai/stable-diffusion-xl";
         
-        const response = await fetch(modelUrl, {
+        const response = await `fetch`(modelUrl, {
             headers: {
                 "Authorization": `Bearer ${nvApiKey}`,
                 "Content-Type": "application/json",
