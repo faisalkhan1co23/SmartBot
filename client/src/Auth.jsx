@@ -3,8 +3,8 @@ import { Bot, User, Lock, Mail, Activity, LogIn, UserPlus } from 'lucide-react';
 import './index.css';
 
 // Use environment variable with a robust fallback to prevent 'undefined' issues
-const BASE_URL = import.meta.env.VITE_API_URL || 'https://smartbot-server-3bmu.onrender.com/api';
-const API_URL = `${BASE_URL.replace(/\/$/, '')}/auth`; // Removes trailing slash safely
+const BASE_URL = import.meta.env.VITE_API_URL || 'https://smartbot-server-3bmu.onrender.com';
+const API_URL = `${BASE_URL.replace(/\/$/, '')}/api/auth`; // Removes trailing slash safely
 
 const Auth = ({ setToken }) => {
     const [mode, setMode] = useState('login'); // 'login', 'register', 'forgot', 'reset'
